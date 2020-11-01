@@ -2,7 +2,7 @@
   <div id="home">
     <form @submit="addTodo">
       <input type="text" name="add-todo" id="add-todo" v-model="title" placeholder="todo" ref="input"/>
-      <input type="submit" value="Add Todo">
+      <input type="submit" value="Add Todo" id="submit-btn" />
     </form>
     <TodosList v-bind:todos="todos" v-on:del-todo="deleteTodo"/>
   </div>
@@ -28,21 +28,25 @@ export default {
       localStorage.setItem('todos', JSON.stringify(this.todos))
     },
     addTodo(e){
-      const myUUID = uuid()
       e.preventDefault()
-      const newTodo = {
-        id: myUUID,
-        title: this.title,
-        completed: false
+      if(this.title !== ''){
+        const myUUID = uuid()
+        const newTodo = {
+          id: myUUID,
+          title: this.title,
+          completed: false
+        }
+        this.todos = [...this.todos, newTodo]
+        localStorage.setItem('todos', JSON.stringify(this.todos))
+        this.title=''
+        this.$refs.input.focus()
       }
-      this.todos = [...this.todos, newTodo]
-      localStorage.setItem('todos', JSON.stringify(this.todos))
-      this.title=''
-      this.$refs.input.focus()
     }
   },
   mounted(){
-    this.todos = JSON.parse(localStorage.getItem('todos'))
+    if(localStorage.getItem("todos").length > 0){
+      this.todos = JSON.parse(localStorage.getItem('todos'))
+    }
   }
 }
 </script>
@@ -59,6 +63,12 @@ input {
     outline: none;
     font-size: 16px;
   }
+
+ #submit-btn {
+   cursor: pointer;
+   background: white;
+
+ }
 
 </style>
 
